@@ -112,30 +112,33 @@ namespace MangaCreator {
                         pic.RotateFlip(RotateFlipType.Rotate90FlipNone);
                     }
 
-                    using (Bitmap resizedImage = ResizeImage(pic, deviceWith_, deviceHeight_)) {
+                    double scale = (double)pic.Width / deviceWith_;
+                    int height = (int)(pic.Height / scale);
+
+                    using (Bitmap resizedImage = ResizeImage(pic, deviceWith_, height)) {
                         resizedImage.Save(imageCopyPath, ImageFormat.Jpeg);
+                        margin = (deviceHeight_ - resizedImage.Height) / 2;
+                        // 创建html文件
+                        string htmlName = String.Format("{0}.html", page);
+                        string htmlPath = Path.Combine(path, htmlFolderName_, htmlName);
+                        using (StreamWriter output = new StreamWriter(htmlPath)) {
+                            output.WriteLine("<!DOCTYPE html>");
+                            output.WriteLine("<html>");
+                            output.WriteLine("\t<head>");
+                            output.WriteLine("\t\t<meta content=\"KC2/1.160/cf63ffb/win\" name=\"generator\"/>");
+                            output.WriteLine("\t\t<title>{0}</title>", page);
+                            output.WriteLine("\t</head>");
+                            output.WriteLine("\t<body>");
+                            output.WriteLine("\t\t<div>");
+                            output.WriteLine("\t\t\t<img style=\"width:{0}px;height:{1}px;margin-left:0px;margin-top:{2}px;margin-right:0px;margin-bottom:{3}px;\" src=\"{4}/{5}.jpg\" />", resizedImage.Width, resizedImage.Height, margin, margin, imageFolderName_, page);
+                            output.WriteLine("\t\t</div>");
+                            output.WriteLine("\t</body>");
+                            output.WriteLine("</html>");
+                        }
                     }
-                    // 计算图片的缩放系数，宽度铺满，计算高度
-                    margin = (deviceHeight_ - pic.Height) / 2;
+
                 }
                 
-                // 创建html文件
-                string htmlName = String.Format("{0}.html", page);
-                string htmlPath = Path.Combine(path, htmlFolderName_, htmlName);
-                using (StreamWriter output = new StreamWriter(htmlPath)) {
-                    output.WriteLine("<!DOCTYPE html>");
-                    output.WriteLine("<html>");
-                    output.WriteLine("\t<head>");
-                    output.WriteLine("\t\t<meta content=\"KC2/1.160/cf63ffb/win\" name=\"generator\"/>");
-                    output.WriteLine("\t\t<title>{0}</title>", page);
-                    output.WriteLine("\t</head>");
-                    output.WriteLine("\t<body>");
-                    output.WriteLine("\t\t<div>");
-                    output.WriteLine("\t\t\t<img style=\"width:{0}px;height:{1}px;margin-left:0px;margin-top:{2}px;margin-right:0px;margin-bottom:{3}px;\" src=\"{4}/{5}.jpg\" />", deviceWith_, deviceHeight_, margin, margin, imageFolderName_, page);
-                    output.WriteLine("\t\t</div>");
-                    output.WriteLine("\t</body>");
-                    output.WriteLine("</html>");
-                }
 
                 opfItem += String.Format(opfItemFormat, htmlFolderName_, page, page+1);
                 opfItemref += String.Format(opfItemrefFormat, page+1);
