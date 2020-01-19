@@ -33,14 +33,14 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(49, 33);
+            this.textBox1.Location = new System.Drawing.Point(28, 31);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(612, 21);
             this.textBox1.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(667, 31);
+            this.button1.Location = new System.Drawing.Point(646, 29);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -50,7 +50,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(49, 92);
+            this.textBox2.Location = new System.Drawing.Point(28, 90);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
@@ -60,7 +60,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(49, 74);
+            this.label1.Location = new System.Drawing.Point(28, 72);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 12);
             this.label1.TabIndex = 3;
@@ -68,7 +68,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(748, 31);
+            this.button2.Location = new System.Drawing.Point(727, 29);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(81, 23);
             this.button2.TabIndex = 4;
@@ -80,13 +80,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(841, 451);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(857, 490);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(857, 490);
             this.Name = "Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MangaCreator";
             this.ResumeLayout(false);
             this.PerformLayout();
