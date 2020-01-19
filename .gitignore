@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/MangaCreator/v16
+/obj
+*.config
+*.pdb
+/bin/Release/data
+/bin/Release/mobi
+/bin/Release/comic_gen.log
+/bin/Debug/mobi
+*.log
+/bin/Debug/data
+/bin/Debug/data
+/bin/Debug
