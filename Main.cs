@@ -18,9 +18,11 @@ namespace MangaCreator {
         static string tmpSaveFolder = "data";
         static string mobiFolder = "mobi";
 
-        static ConcurrentQueue<string> queue;
-
         private delegate void SafeCallDelegate(string text);
+
+        private static bool ifStop = false;
+
+        private static Thread genThread;
 
         public Main() {
             InitializeComponent();
@@ -39,33 +41,28 @@ namespace MangaCreator {
                 Directory.CreateDirectory(tmpSaveFolder);
                 Directory.CreateDirectory(mobiFolder);
 
-                queue = new ConcurrentQueue<string>();
-
+                List<string> directoryList = new List<string>();
                 if (directories.Count() == 0) {
-                    queue.Enqueue(path);
+                    directoryList.Add(path);
                 } else {
-                    foreach (string directory in directories) {
-                        queue.Enqueue(directory);
-                    }
+                    directoryList = directories.OrderBy(s => int.Parse(Regex.Match(Path.GetFileName(s), @"\d+").Value)).ToList();
                 }
-                // 开启两个线程工作
-                for (int i = 0; i < 2; i++) {
-                    new Thread(KindleGenThread).Start();
-                }
+                // 开始生成
+                ifStop = false;
+                genThread = new Thread(KindleGen);
+                genThread.Start(directoryList);
             } catch (Exception e) {
                 MessageBox.Show(e.Message);
             }
         }
 
-        private void KindleGenThread() {
-            int i = 1;
+        private void KindleGen(Object directoryList) {
             try {
-                while (true) {
-                    string directory;
-                    if (queue.IsEmpty) {
+                foreach (string directory in (List<string>)directoryList) {
+
+                    if (ifStop) {
                         return;
                     }
-                    queue.TryDequeue(out directory);
 
                     WriteTextSafe(string.Format("开始转换：{0}", directory));
 
@@ -76,6 +73,7 @@ namespace MangaCreator {
                     Generator gen = new Generator(tmpSaveFolder, name, "作者");
                     var files = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories).OrderBy((s => int.Parse(Regex.Match(Path.GetFileNameWithoutExtension(s), @"\d+").Value)));
 
+                    int i = 1;
                     foreach (string file in files) {
                         gen.HtmlGenerator(file, i);
                         i++;
@@ -108,7 +106,7 @@ namespace MangaCreator {
                     p.Close();
 
                     try {
-                        File.Move(Path.Combine(tmpSaveFolder, name, mobiFileName), Path.Combine(mobiFolder, mobiFileName));
+                        File.Copy(Path.Combine(tmpSaveFolder, name, mobiFileName), Path.Combine(mobiFolder, mobiFileName), true);
                         WriteTextSafe(string.Format("创建成功：{0}", Path.Combine(mobiFolder, mobiFileName)));
                         DirectoryInfo di = new DirectoryInfo(Path.Combine(tmpSaveFolder, name));
                         di.Delete(true);
@@ -118,7 +116,7 @@ namespace MangaCreator {
                     }
                 }
             } catch (Exception e) {
-                Console.WriteLine(e.Message);
+                MessageBox.Show(e.Message);
                 return;
             }
         }
@@ -136,13 +134,34 @@ namespace MangaCreator {
                     }
                 }
             } catch (Exception e) {
-
+                MessageBox.Show(e.Message);
             }
         }
 
         private void button2_Click(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(this.textBox1.Text)) {
                 Work(this.textBox1.Text);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e) {
+            if (DialogResult.Yes == MessageBox.Show("是否确认停止生成？程序将会在生成当前mobi结束后停止", "警告", MessageBoxButtons.YesNo)) {
+                ifStop = true;
+            }
+        }
+
+        [Obsolete]
+        private void button4_Click(object sender, EventArgs e) {
+            try {
+                if (genThread != null && genThread.ThreadState != System.Threading.ThreadState.Stopped) {
+                    if (genThread != null && genThread.ThreadState != System.Threading.ThreadState.Suspended) {
+                        genThread.Suspend();
+                    } else {
+                        genThread.Resume();
+                    }
+                }
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
             }
         }
     }
