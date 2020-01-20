@@ -189,5 +189,9 @@ namespace MangaCreator {
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void button6_Click(object sender, EventArgs e) {
+            Process.Start("explorer.exe", mobiFolder);
+        }
     }
 }
