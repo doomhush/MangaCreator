@@ -26,6 +26,7 @@ namespace MangaCreator {
 
         public Main() {
             InitializeComponent();
+            this.Text += " " + Version.ver;
         }
 
         private void button1_Click(object sender, EventArgs e) {
