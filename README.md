@@ -3,6 +3,9 @@
 ## 介绍
 
 用C#实现的基于kindlegen.exe的漫画生成器，全自动生成mobi，根据文件夹命名，方便快捷。
+
+.NET Framework 4.5
+
 **注：使用本程序需要有kindlegen.exe**
 
 ## 特性
