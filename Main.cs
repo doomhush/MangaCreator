@@ -66,7 +66,7 @@ namespace MangaCreator {
                     }
                 }
 
-                string[] files = new string[0];
+                List<string> files = new List<string>();
                 string name = string.Empty;
                 for (int k = 0; k < ((List<string>)directoryList).Count; k++) {
                     if (ifStop) {
@@ -76,7 +76,7 @@ namespace MangaCreator {
                     string directory = ((List<string>)directoryList)[k];
                     WriteTextSafe(string.Format("开始转换：{0}", directory));
 
-                    files = files.Concat(Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories).OrderBy((s => int.Parse(Regex.Match(Path.GetFileNameWithoutExtension(s), @"\d+").Value))).ToArray()).ToArray();
+                    files = files.Concat(Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories).OrderBy((s => int.Parse(Regex.Match(Path.GetFileNameWithoutExtension(s), @"\d+").Value))).ToList()).ToList();
 
                     if (1 == count) {
                         name = Path.GetFileName(directory);
@@ -96,12 +96,14 @@ namespace MangaCreator {
 
                     Generator gen = new Generator(tmpSaveFolder, name, "作者");
 
-                    for (int i = 0; i < files.Length; i++) {
+                    for (int i = 0; i < files.Count; i++) {
                         gen.HtmlGenerator(files[i], i);
                     }
 
                     gen.OpfGenerator();
                     gen.TocGenerator();
+
+                    files.Clear();
 
                     var p = new Process();
                     //是否使用操作系统shell启动
