@@ -58,26 +58,48 @@ namespace MangaCreator {
 
         private void KindleGen(Object directoryList) {
             try {
-                foreach (string directory in (List<string>)directoryList) {
+                int count = 1;
+                int max_count = 1;
+                if (!string.IsNullOrEmpty(this.textBox3.Text)) {
+                    if (!int.TryParse(this.textBox3.Text, out max_count)) {
+                        MessageBox.Show("请在合并一栏输入数字");
+                    }
+                }
 
+                string[] files = new string[0];
+                string name = string.Empty;
+                for (int k = 0; k < ((List<string>)directoryList).Count; k++) {
                     if (ifStop) {
                         return;
                     }
 
+                    string directory = ((List<string>)directoryList)[k];
                     WriteTextSafe(string.Format("开始转换：{0}", directory));
 
-                    string name = Path.GetFileName(directory);
+                    files = files.Concat(Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories).OrderBy((s => int.Parse(Regex.Match(Path.GetFileNameWithoutExtension(s), @"\d+").Value))).ToArray()).ToArray();
+
+                    if (1 == count) {
+                        name = Path.GetFileName(directory);
+                    }
+                    if (count < max_count && k != ((List<string>)directoryList).Count - 1) {
+                        count++;
+                        continue;
+                    } else {
+                        if (1 != count) {
+                            name += "-" + Path.GetFileName(directory);
+                        }
+                        count = 1;
+                    }
+
                     // 去除字符串里的所有空格
                     name = name.Replace(" ", "");
 
                     Generator gen = new Generator(tmpSaveFolder, name, "作者");
-                    var files = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories).OrderBy((s => int.Parse(Regex.Match(Path.GetFileNameWithoutExtension(s), @"\d+").Value)));
 
-                    int i = 1;
-                    foreach (string file in files) {
-                        gen.HtmlGenerator(file, i);
-                        i++;
+                    for (int i = 0; i < files.Length; i++) {
+                        gen.HtmlGenerator(files[i], i);
                     }
+
                     gen.OpfGenerator();
                     gen.TocGenerator();
 
