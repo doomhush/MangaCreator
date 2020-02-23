@@ -99,7 +99,7 @@ namespace MangaCreator {
                 using (Image pic = Image.FromFile(imagePath)) {
                 
                     // 第一张图片当封面
-                    if (page == 1) {
+                    if (page == 0) {
                         // 复制图片到图片文件夹
                         pic.Save(Path.Combine(path, "cover-image.jpg"));
                     }
@@ -115,26 +115,28 @@ namespace MangaCreator {
                     double scale = (double)pic.Width / deviceWith_;
                     int height = (int)(pic.Height / scale);
 
-                    using (Bitmap resizedImage = ResizeImage(pic, deviceWith_, height)) {
+                    // 保存压缩文件
+                    using (Bitmap resizedImage = ResizeImage(pic, Main.scale)) {
                         resizedImage.Save(imageCopyPath, ImageFormat.Jpeg);
-                        margin = (deviceHeight_ - resizedImage.Height) / 2;
-                        // 创建html文件
-                        string htmlName = String.Format("{0}.html", page);
-                        string htmlPath = Path.Combine(path, htmlFolderName_, htmlName);
-                        using (StreamWriter output = new StreamWriter(htmlPath)) {
-                            output.WriteLine("<!DOCTYPE html>");
-                            output.WriteLine("<html>");
-                            output.WriteLine("\t<head>");
-                            output.WriteLine("\t\t<meta content=\"KC2/1.160/cf63ffb/win\" name=\"generator\"/>");
-                            output.WriteLine("\t\t<title>{0}</title>", page);
-                            output.WriteLine("\t</head>");
-                            output.WriteLine("\t<body>");
-                            output.WriteLine("\t\t<div>");
-                            output.WriteLine("\t\t\t<img style=\"width:{0}px;height:{1}px;margin-left:0px;margin-top:{2}px;margin-right:0px;margin-bottom:{3}px;\" src=\"{4}/{5}.jpg\" />", resizedImage.Width, resizedImage.Height, margin, margin, imageFolderName_, page);
-                            output.WriteLine("\t\t</div>");
-                            output.WriteLine("\t</body>");
-                            output.WriteLine("</html>");
-                        }
+                    }
+
+                    margin = (deviceHeight_ - height) / 2;
+                    // 创建html文件
+                    string htmlName = String.Format("{0}.html", page);
+                    string htmlPath = Path.Combine(path, htmlFolderName_, htmlName);
+                    using (StreamWriter output = new StreamWriter(htmlPath)) {
+                        output.WriteLine("<!DOCTYPE html>");
+                        output.WriteLine("<html>");
+                        output.WriteLine("\t<head>");
+                        output.WriteLine("\t\t<meta content=\"KC2/1.160/cf63ffb/win\" name=\"generator\"/>");
+                        output.WriteLine("\t\t<title>{0}</title>", page);
+                        output.WriteLine("\t</head>");
+                        output.WriteLine("\t<body>");
+                        output.WriteLine("\t\t<div>");
+                        output.WriteLine("\t\t\t<img style=\"width:{0}px;height:{1}px;margin-left:0px;margin-top:{2}px;margin-right:0px;margin-bottom:{3}px;\" src=\"{4}/{5}.jpg\" />", deviceWith_, height, margin, margin, imageFolderName_, page);
+                        output.WriteLine("\t\t</div>");
+                        output.WriteLine("\t</body>");
+                        output.WriteLine("</html>");
                     }
 
                 }
@@ -174,7 +176,9 @@ namespace MangaCreator {
             return true;
         }
 
-        private Bitmap ResizeImage(Image image, int width, int height) {
+        private Bitmap ResizeImage(Image image, double scale) {
+            int width = (int)(image.Width * scale);
+            int height = (int)(image.Height * scale);
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
 

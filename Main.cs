@@ -18,6 +18,9 @@ namespace MangaCreator {
         static string tmpSaveFolder = "data";
         static string mobiFolder = "mobi";
 
+        // 压缩比例
+        public static double scale = 0;
+
         private delegate void SafeCallDelegate(string text);
 
         private static bool ifStop = false;
@@ -64,6 +67,19 @@ namespace MangaCreator {
                 if (!string.IsNullOrEmpty(this.textBox3.Text)) {
                     if (!int.TryParse(this.textBox3.Text, out max_count)) {
                         MessageBox.Show("请在合并一栏输入数字");
+                        return;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(this.textBox4.Text)) {
+                    if (!double.TryParse(this.textBox4.Text, out scale)) {
+                        MessageBox.Show("请在压缩一栏输入数字");
+                        return;
+                    } else {
+                        if (scale <= 0 || scale > 1) {
+                            MessageBox.Show("不要在压缩一栏输入小于等于零或大于一的数字");
+                            return;
+                        }
                     }
                 }
 
